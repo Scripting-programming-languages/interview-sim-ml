@@ -1,5 +1,5 @@
 import requests
-from config import API_KEY, AI_MODEL
+from app.core.config import API_KEY, AI_MODEL
 
 def ask_llm(message_text: str) -> str:
     url = "https://api.intelligence.io.solutions/api/v1/chat/completions"

@@ -1,4 +1,4 @@
-from llm import ask_llm
+from app.services.llm import ask_llm
 
 
 def generate_feedback(user_answer: str, reference: str, keywords: list[str]) -> str:

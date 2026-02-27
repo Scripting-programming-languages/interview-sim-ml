@@ -1,7 +1,6 @@
-from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 
-model = SentenceTransformer("intfloat/multilingual-e5-base")
+from app.models import model
 
 def semantic_similarity(answer, reference):
     emb1 = model.encode([answer], normalize_embeddings=True)
