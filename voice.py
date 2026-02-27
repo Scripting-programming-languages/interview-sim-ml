@@ -1,18 +1,22 @@
-import whisper
+# import whisper
 import subprocess
 import os
 import numpy as np
 from sentence_transformers import SentenceTransformer, util
+import string
+from faster_whisper import WhisperModel
 
 AUDIO_FILE = "audio.mp3" # адрес изображение
 
-FILLER_WORDS = ["эээ", "ну", "типа", "как бы", "короче", "значит"] # слова паразиты
+FILLER_WORDS = ["вот", "ну", "типа", "как бы", "короче", "значит"] # слова паразиты
 
 PAUSE_THRESHOLD = 0.5  # дозволительная пауза в секундах
 
 # загрузка модели
-whisper_model = whisper.load_model("base")
-semantic_model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+# whisper_model = whisper.load_model("base")
+# semantic_model = SentenceTransformer("paraphrase-multilingual-MiniLM-L12-v2")
+model = WhisperModel("small", device="cpu", compute_type="int8")
+
 
 # преобразование к формату .wav
 def convert_audio_to_wav(input_path, output_path):
@@ -37,34 +41,50 @@ def detect_pauses(words):
 def count_fillers(words):
     fillers = []
     for w in words:
-        word = w["word"].lower().strip()
-        if word in FILLER_WORDS:
-            fillers.append(word)
+        if w.lower() in FILLER_WORDS:
+            fillers.append(w)
     return fillers
 
 # удаление слов паразитов
-def clean_text(text):
-    for fw in FILLER_WORDS:
-        text = text.replace(fw, "")
-    return " ".join(text.split())
+def clean_text(raw_text):
+    words = raw_text.split(" ")
+    cleaned = ""
+    for w in words:
+        word = w.strip(string.whitespace + string.punctuation).lower()
+        if word not in FILLER_WORDS:
+            cleaned += w + " "
+    return cleaned
 
 
 # расшифровка аудио
 wav_file = "temp.wav"
 convert_audio_to_wav(AUDIO_FILE, wav_file)
 
-result = whisper_model.transcribe(wav_file, word_timestamps=True)
-os.remove(wav_file)
+segments, info = model.transcribe(
+    wav_file,
+    word_timestamps=True,
+    language=None  
+)
 
-raw_text = result["text"]
+raw_text = ""
 
 words = []
-for seg in result["segments"]:
-    if "words" in seg:
-        words.extend(seg["words"])
+
+for segment in segments:
+    raw_text += segment.text + " "
+    if segment.words:
+        for w in segment.words:
+            words.append({
+                "word": w.word,
+                "start": w.start,
+                "end": w.end
+            })
+
+word_list = [w["word"] for w in words]
+clean_words = [w.strip(string.whitespace + string.punctuation) for w in word_list]
 
 pauses = detect_pauses(words)
-fillers = count_fillers(words)
+fillers = count_fillers(clean_words)
 cleaned_text = clean_text(raw_text)
 
 # результаты 
