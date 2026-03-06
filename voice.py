@@ -5,6 +5,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer, util
 import string
 from faster_whisper import WhisperModel
+from llm_client import generate_queries
 
 AUDIO_FILE = "audio.mp3" # адрес изображение
 
@@ -102,3 +103,12 @@ if pauses:
 print("\nСлова-паразиты:")
 print(f"Количество: {len(fillers)}")
 print(f"Список: {fillers}")
+
+feedback = generate_queries(
+    raw_text,
+    cleaned_text,
+    pauses,
+    fillers
+)
+
+print(feedback)
