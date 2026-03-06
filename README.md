@@ -11,3 +11,6 @@ pip install faster-whisper ffmpeg-python
 
 choco install ffmpeg
 -----------------------------------------------------------------------
+Запуск:
+uvicorn app.main:app --reload
+uvicorn main:app --reload
