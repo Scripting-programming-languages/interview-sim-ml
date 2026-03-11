@@ -32,3 +32,30 @@ def generate_feedback(user_answer: str, reference: str, keywords: list[str]) -> 
     """
     return ask_llm(message)
 
+def generate_feedback_quality_of_speech(raw_text, cleaned_text, pauses, fillers):
+    prompt = f"""
+    Ты анализируешь устную речь студента.
+
+    Исходный распознанный текст:
+    {raw_text}
+
+    Текст без слов-паразитов:
+    {cleaned_text}
+
+    Количество длинных пауз:
+    {len(pauses)}
+
+    Список пауз:
+    {pauses}
+
+    Количество слов-паразитов:
+    {len(fillers)}
+
+    Слова-паразиты:
+    {fillers}
+    
+    Оцени качество речи.
+
+    Что нужно улучшить (пиши кратко, связным текстом, без перечислений, обращайся на вы)
+    """
+    return ask_llm(prompt)
