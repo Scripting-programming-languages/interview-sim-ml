@@ -14,15 +14,15 @@ async def estimate_answer(
     reference_text: str = Form(...)
 ):
     # преобразование аудио в текст
-
+    
     text = "Питон это язык программирования"
     feedback1 = generate_feedback(text, reference_text, [])
     score1 = final_score(text, reference_text, [])
     return SingleAnswerEstimation(
         score=score1,
-        speech_score=0,
+        speech_score=0, 
         text_feedback=feedback1,
-        speech_feedback="",
+        speech_feedback="", 
         transcribed_text=text
     )
 
