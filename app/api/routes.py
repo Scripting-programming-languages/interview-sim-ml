@@ -2,9 +2,11 @@ from fastapi import APIRouter, UploadFile, File, Form
 from app.schemas.estimation import SingleAnswerEstimation
 from app.schemas.report import FinalInterviewReport
 from app.schemas.summary import SummaryRequest
-from app.services.feedback import generate_feedback
+from app.services.feedback import generate_feedback, generate_feedback_quality_of_speech
 from app.services.llm import ask_llm
 from app.services.semantic import final_score
+from app.services.voice import voice_transcription
+from app.services.speech_quality import speech_quality_score
 
 router = APIRouter()
 
@@ -14,16 +16,19 @@ async def estimate_answer(
     reference_text: str = Form(...)
 ):
     # преобразование аудио в текст
+    raw_text, cleaned_text, pauses, fillers, duration, clean_words = voice_transcription(audio)
+    feedback2 = generate_feedback_quality_of_speech(raw_text, cleaned_text, pauses, fillers)
+    score2 = speech_quality_score(clean_words, fillers, pauses, duration)
 
-    text = "Питон это язык программирования"
-    feedback1 = generate_feedback(text, reference_text, [])
-    score1 = final_score(text, reference_text, [])
+    # text = "Питон это язык программирования"
+    feedback1 = generate_feedback(cleaned_text, reference_text, [])
+    score1 = final_score(cleaned_text, reference_text, [])
     return SingleAnswerEstimation(
         score=score1,
-        speech_score=0,
+        speech_score=score2,
         text_feedback=feedback1,
-        speech_feedback="",
-        transcribed_text=text
+        speech_feedback=feedback2,
+        transcribed_text=cleaned_text
     )
 
 
