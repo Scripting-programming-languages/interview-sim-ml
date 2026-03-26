@@ -40,12 +40,12 @@ async def estimate_answer(
     audio: UploadFile = File(...),
     reference_text: str = Form(...)
 ):
-    # TODO файл с аудио может закрыться после выхода из функции
-    # его как-то сразу надо считать в байты
+    
+    audio_bytes = await audio.read() # вот тут проблема
     
     background_tasks.add_task(
         process_audio_task,
-        audio,
+        audio_bytes,
         reference_text,
         answer_id
     )
