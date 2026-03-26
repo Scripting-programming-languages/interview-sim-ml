@@ -29,6 +29,7 @@ def generate_feedback(user_answer: str, reference: str, keywords: list[str]) -> 
 
     Не переписывай полностью ответ.
     Дай структурированный краткий фидбек.
+    Давай рекомендации на Вы. Например, "Вам стоит ..."
     """
     return ask_llm(message)
 
