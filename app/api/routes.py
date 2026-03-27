@@ -41,7 +41,7 @@ async def estimate_answer(
     reference_text: str = Form(...)
 ):
     
-    audio_bytes = await audio.read() # вот тут проблема
+    audio_bytes = await audio.read() 
     
     background_tasks.add_task(
         process_audio_task,
