@@ -19,7 +19,10 @@ def convert_audio_to_wav(audio_bytes):
     with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as input_tmp:
         input_tmp.write(audio_bytes)
         input_path = input_tmp.name
-    output_path = input_path.replace(".mp3", ".wav")
+    output_path = ""
+    base_of_postfixes = [".mp3", ".webm", ".ogg"]
+    for postfix in base_of_postfixes:
+        output_path = input_path.replace(postfix, ".wav")
     subprocess.run([
         "ffmpeg", "-y",
         "-i", input_path,
