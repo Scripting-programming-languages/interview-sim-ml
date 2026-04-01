@@ -15,11 +15,14 @@ PAUSE_THRESHOLD = 0.5                                              # дозво�
 model = WhisperModel("small", device="cpu", compute_type="int8")
 
 # преобразование к формату .wav
-def convert_audio_to_wav(upload_file):
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".webm") as input_tmp:
-        input_tmp.write(upload_file.file.read())
+def convert_audio_to_wav(audio_bytes):
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as input_tmp:
+        input_tmp.write(audio_bytes)
         input_path = input_tmp.name
-    output_path = input_path.replace(".webm", ".wav")
+    output_path = ""
+    base_of_postfixes = [".mp3", ".webm", ".ogg"]
+    for postfix in base_of_postfixes:
+        output_path = input_path.replace(postfix, ".wav")
     subprocess.run([
         "ffmpeg", "-y",
         "-i", input_path,
