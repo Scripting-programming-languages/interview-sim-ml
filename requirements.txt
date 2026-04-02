@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+faster-whisper
+kafka-python
+sentence-transformers
+numpy
+requests
+python-multipart
