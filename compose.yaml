@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  ml-service:
+    build: .
+    container_name: interview-sim-ml
+    working_dir: /app
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - kafka-net
+networks:
+  kafka-net:
+    external: true

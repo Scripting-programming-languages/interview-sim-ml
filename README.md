@@ -14,3 +14,31 @@ choco install ffmpeg
 Запуск:
 uvicorn app.main:app --reload
 uvicorn main:app --reload
+-----------------------------------------------------------------------
+Запуск через докер:
+на данный момент отдельно от докера с кафкой: 
+1) создать сеть взаимосвязи кафки и мл, прописать в терминале
+
+   docker network create kafka-net 
+
+2) добавить общение через сеть в compose.yaml сервиса бекенда.
+Вставить в сервисы init-kafka, kafka, kafka-ui, zookeeper следующие 2 строки
+
+    networks:
+        - kafka-net 
+
+В конце того же compose.yaml добавить сеть, следующие 3 строки
+
+    networks:
+        kafka-net:
+            external: true
+
+3) запустить сервис кафки
+
+    docker compose up
+
+4) запустить сервис ml 
+
+    docker compose up
+    или
+    docker compose up --build
